@@ -1,34 +1,341 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en">
+<head>
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Recipe</title>
 <style>
-:root{--cell:#fff;--fg:rgb(55,53,47);--mut:rgba(55,53,47,.65);--line:rgba(55,53,47,.16);--act:rgb(237,243,236);--auto:rgb(251,243,219);--sh:rgb(247,246,243)}
-@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--fg:rgba(255,255,255,.81);--mut:rgba(255,255,255,.46);--cell:rgb(37,37,37);--line:rgba(255,255,255,.13);--act:rgb(36,61,48);--auto:rgb(89,74,42);--sh:rgb(37,37,37)}}
-:root[data-theme=dark]{--fg:rgba(255,255,255,.81);--mut:rgba(255,255,255,.46);--cell:rgb(37,37,37);--line:rgba(255,255,255,.13);--act:rgb(36,61,48);--auto:rgb(89,74,42);--sh:rgb(37,37,37)}
-*{box-sizing:border-box}
-html,body{margin:0;background:transparent;color:var(--fg);font:16px/1.5 ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,"Apple Color Emoji",Arial,sans-serif,"Segoe UI Emoji","Segoe UI Symbol";-webkit-font-smoothing:antialiased}
-body{padding:2px}
-.wrap{overflow-x:auto;padding:1px}
-.g{display:grid;gap:1px;min-width:max-content}
-.c{background:var(--cell);padding:6px 12px;box-shadow:0 0 0 1px var(--line);border-radius:3px;display:flex;align-items:center}
-.pre{grid-column:1/-1;justify-content:center;text-align:center}
-.a{background:var(--act);justify-content:center;text-align:center;font-weight:500;min-width:110px;max-width:170px}
-.auto{background:var(--auto)}
-.notes{margin:8px 0 0;padding:0;list-style:none;font-size:13px;color:var(--mut)}
-.notes li:before{content:"⚠ "}
-#ed{margin-top:12px}
-textarea{width:100%;height:200px;background:var(--sh);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:8px;font:13px ui-monospace,SFMono-Regular,Menlo,monospace}
-button{background:var(--sh);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 10px;font:inherit;font-size:13px;cursor:pointer;margin:6px 6px 0 0}
-button:hover{background:var(--line)}
-.hide{display:none}
-</style></head><body>
-<div class="wrap"><div class="g" id="g"></div></div>
+  :root {
+    /* Notion Light Mode Palette */
+    --bg: transparent;
+    --surface: #ffffff;
+    --surface-hover: #f7f6f3;
+    --callout-gray: #f1f1ef;
+    --fg: #37352f;
+    --fg-muted: rgba(55, 53, 47, 0.65);
+    --fg-faint: rgba(55, 53, 47, 0.4);
+    --border: rgba(55, 53, 47, 0.09);
+    --border-strong: rgba(55, 53, 47, 0.16);
+    
+    /* Notion Semantic Accents */
+    --green-bg: #edf3ec;
+    --green-fg: #1e4620;
+    --green-border: rgba(30, 70, 32, 0.12);
+    
+    --yellow-bg: #fbf3db;
+    --yellow-fg: #5c4308;
+    --yellow-border: rgba(92, 67, 8, 0.14);
+    
+    --red-bg: #fdebeb;
+    --red-fg: #932929;
+    --red-border: rgba(147, 41, 41, 0.15);
+
+    --blue-bg: #e7f3f8;
+    --blue-fg: #1b4f72;
+
+    --shadow-sm: 0 1px 2px rgba(15, 15, 15, 0.04);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme=light]) {
+      /* Notion Dark Mode Palette */
+      --surface: #202020;
+      --surface-hover: #262626;
+      --callout-gray: #252525;
+      --fg: rgba(255, 255, 255, 0.85);
+      --fg-muted: rgba(255, 255, 255, 0.55);
+      --fg-faint: rgba(255, 255, 255, 0.3);
+      --border: rgba(255, 255, 255, 0.08);
+      --border-strong: rgba(255, 255, 255, 0.14);
+
+      --green-bg: #243d30;
+      --green-fg: #9dd4b5;
+      --green-border: rgba(157, 212, 181, 0.14);
+
+      --yellow-bg: #493c22;
+      --yellow-fg: #f3d078;
+      --yellow-border: rgba(243, 208, 120, 0.16);
+
+      --red-bg: #4a2525;
+      --red-fg: #f49b9b;
+      --red-border: rgba(244, 155, 155, 0.16);
+
+      --blue-bg: #1e3542;
+      --blue-fg: #8ac4e6;
+
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  :root[data-theme=dark] {
+    --surface: #202020;
+    --surface-hover: #262626;
+    --callout-gray: #252525;
+    --fg: rgba(255, 255, 255, 0.85);
+    --fg-muted: rgba(255, 255, 255, 0.55);
+    --fg-faint: rgba(255, 255, 255, 0.3);
+    --border: rgba(255, 255, 255, 0.08);
+    --border-strong: rgba(255, 255, 255, 0.14);
+    --green-bg: #243d30;
+    --green-fg: #9dd4b5;
+    --green-border: rgba(157, 212, 181, 0.14);
+    --yellow-bg: #493c22;
+    --yellow-fg: #f3d078;
+    --yellow-border: rgba(243, 208, 120, 0.16);
+    --red-bg: #4a2525;
+    --red-fg: #f49b9b;
+    --red-border: rgba(244, 155, 155, 0.16);
+    --blue-bg: #1e3542;
+    --blue-fg: #8ac4e6;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--fg);
+    font: 14px/1.45 ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body { padding: 4px; }
+
+  /* Optional Title Header (shown if ?title=1 or in editor) */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 0 2px;
+  }
+  .header h1 {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .wrap {
+    overflow-x: auto;
+    padding: 2px;
+    scrollbar-width: thin;
+  }
+
+  .g {
+    display: grid;
+    gap: 6px;
+    min-width: max-content;
+    align-items: stretch;
+  }
+
+  /* Base Cell */
+  .c {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 12px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    align-items: center;
+    transition: background-color 0.15s ease, opacity 0.15s ease, border-color 0.15s ease;
+    user-select: none;
+  }
+
+  /* Prep Callout Banners */
+  .pre {
+    grid-column: 1 / -1;
+    background: var(--callout-gray);
+    border-color: var(--border);
+    justify-content: flex-start;
+    gap: 8px;
+    font-size: 13.5px;
+    color: var(--fg);
+    cursor: pointer;
+  }
+  .pre:hover { background: var(--surface-hover); }
+  .pre-icon {
+    font-size: 14px;
+    opacity: 0.8;
+    flex-shrink: 0;
+  }
+
+  /* Ingredient Cells */
+  .ing {
+    justify-content: space-between;
+    gap: 12px;
+    min-width: 210px;
+    max-width: 320px;
+    cursor: pointer;
+  }
+  .ing:hover {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+  }
+  .ing-name {
+    font-weight: 450;
+    color: var(--fg);
+  }
+  .ing-qty {
+    font-size: 12.5px;
+    color: var(--fg-muted);
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+    white-space: nowrap;
+    background: var(--callout-gray);
+    padding: 2px 6px;
+    border-radius: 4px;
+  }
+
+  /* Interactive Done State */
+  .done {
+    opacity: 0.45;
+  }
+  .done .ing-name, .done .pre-text {
+    text-decoration: line-through;
+  }
+
+  /* Action / Process Nodes */
+  .a {
+    background: var(--green-bg);
+    color: var(--green-fg);
+    border-color: var(--green-border);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-width: 125px;
+    max-width: 190px;
+    padding: 10px 14px;
+    gap: 3px;
+  }
+  .act-main {
+    font-weight: 600;
+    font-size: 13.5px;
+    line-height: 1.3;
+  }
+  .act-out {
+    font-size: 11.5px;
+    opacity: 0.78;
+    font-weight: 400;
+    line-height: 1.2;
+  }
+
+  /* Auto-inferred Warning/Note Accent (Notion Yellow) */
+  .auto {
+    background: var(--yellow-bg) !important;
+    color: var(--yellow-fg) !important;
+    border-color: var(--yellow-border) !important;
+  }
+
+  /* Linter Callout Box */
+  .notes {
+    margin: 12px 2px 0;
+    padding: 10px 14px;
+    list-style: none;
+    font-size: 13px;
+    background: var(--red-bg);
+    color: var(--red-fg);
+    border: 1px solid var(--red-border);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .notes li {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .notes li::before {
+    content: "⚠️";
+    font-size: 12px;
+  }
+
+  /* Editor UI */
+  #ed {
+    margin-top: 14px;
+    padding: 12px;
+    background: var(--callout-gray);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  textarea {
+    width: 100%;
+    height: 190px;
+    background: var(--surface);
+    color: var(--fg);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 10px;
+    font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    resize: vertical;
+    outline: none;
+  }
+  textarea:focus {
+    border-color: #2eaadc;
+    box-shadow: 0 0 0 2px rgba(46, 170, 220, 0.2);
+  }
+  .toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  button {
+    background: var(--surface);
+    color: var(--fg);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    padding: 5px 12px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.12s ease;
+  }
+  button:hover { background: var(--surface-hover); }
+  button.primary {
+    background: #2383e2;
+    color: #fff;
+    border-color: transparent;
+  }
+  button.primary:hover { background: #1b6ec2; }
+  #m {
+    font-size: 12.5px;
+    color: var(--fg-muted);
+  }
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="header hide" id="hdr">
+  <h1 id="title-el">Recipe</h1>
+</div>
+
+<div class="wrap">
+  <div class="g" id="g"></div>
+</div>
+
 <ul class="notes hide" id="n"></ul>
-<div id="ed" class="hide"><textarea id="src" spellcheck="false"></textarea>
-<div id="bt"><button id="go">Render</button><button id="cp">Copy embed link</button><span id="m"></span></div></div>
+
+<div id="ed" class="hide">
+  <textarea id="src" spellcheck="false" placeholder="Enter recipe DSL..."></textarea>
+  <div class="toolbar" id="bt">
+    <button id="go" class="primary">Render</button>
+    <button id="cp">Copy Notion embed link</button>
+    <span id="m"></span>
+  </div>
+</div>
+
 <script>
-const SAMPLE=`title Espresso Brownies
+const SAMPLE = `title Espresso Brownies
 pre Butter and flour an 8x8-in pan
 pre Preheat oven to 350°F (170°C)
 a: melt => melted butter | 4 oz (115 g) unsalted butter
@@ -36,56 +343,175 @@ b: mix => sweet base | @a | 1 cup (200 g) sugar | 1/4 tsp. (2.5 mL) vanilla extr
 c: mix => wet batter | @b | 2 large (100 g) eggs
 d: fold in => brownie batter | @c | 1/2 cup (80 g) all-purpose flour | 1/3 cup (80 g) cocoa powder | 1/4 tsp. (1.3 g) baking soda | 1/4 tsp. (1.5 g) table salt
 e: bake 350°F (170°C) 30 to 40 min => brownies | @d`;
-const $=id=>document.getElementById(id),esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function parse(t){const R={title:'',pre:[],steps:[],notes:[]};
- for(let l of t.split('\n')){l=l.trim();if(!l)continue;let m;
-  if(m=l.match(/^title\s+(.+)/i))R.title=m[1];
-  else if(m=l.match(/^pre\s+(.+)/i))R.pre.push({t:m[1]});
-  else if(m=l.match(/^(\w+):\s*([^|]*?)\s*(?:=>\s*([^|]*?))?\s*(?:\|(.*))?$/))
-   R.steps.push({id:m[1],action:m[2].trim(),out:(m[3]||'').trim(),ins:(m[4]||'').split('|').map(s=>s.trim()).filter(Boolean),auto:[]});
-  else R.notes.push('Could not parse: '+l)}
- return R}
-function fix(R){const S=R.steps,by={};S.forEach(s=>by[s.id]=s);
- S.forEach((s,i)=>{
-  if(!s.action){s.action='combine';s.auto.push('action')}
-  s.ins=s.ins.filter(x=>{if(x[0]=='@'&&!by[x.slice(1)]){R.notes.push(`${s.id}: unknown reference ${x} dropped`);return false}return true});
-  if(!s.ins.length&&i){s.ins=['@'+S[i-1].id];s.auto.push('input: previous step')}
-  if(!s.out){s.out=s.action.split(' ')[0]+' result';s.auto.push('output name')}
-  s.ins.forEach(x=>{if(x[0]!='@'){if(!/\d|pinch|dash|to taste/i.test(x))R.notes.push(`No quantity: "${x}"`);
-   else if(/\b(oz|cups?|tsp|tbs|tbsp|lb)\b/i.test(x)&&!/\(\s*[\d.]+\s*(g|ml|mL|kg|l)\s*\)/.test(x))R.notes.push(`No metric weight/volume: "${x}"`)}})});
- if(!S.length)return R;
- const used=new Set();S.forEach(s=>s.ins.forEach(x=>x[0]=='@'&&used.add(x.slice(1))));
- const last=S[S.length-1];
- S.slice(0,-1).forEach(s=>{if(!used.has(s.id)){last.ins.unshift('@'+s.id);last.auto.push('joined unused "'+s.out+'"')}});
- const bk=S.map(s=>s.action.match(/(\d{3})\s*°?\s*F/i)).find(Boolean);
- if(bk&&!R.pre.some(p=>/preheat/i.test(p.t)))R.pre.unshift({t:`Preheat oven to ${bk[1]}°F (${Math.round((bk[1]-32)/9)*5}°C)`,auto:1});
- if(/bake|roast/i.test(last.action)&&!R.pre.some(p=>/pan|tray|dish|grease|butter and flour/i.test(p.t)))R.notes.push('No pan/tray prep step given');
- return R}
-function name(x){return x.replace(/^[\d\/.\s]+(\([^)]*\)\s*)?(cups?|tsp\.?|tbs\.?|tbsp|oz|g|ml|shots?|large|lb)?\s*(\([^)]*\)\s*)?/i,'').trim()||x}
-function draw(text){
- const R=fix(parse(text)),S=R.steps,by={};S.forEach(s=>by[s.id]=s);
 
- document.title=R.title||'Recipe';
- const leaves=[],seen=new Set();
- (function w(s){if(seen.has(s.id))return s.d||1;seen.add(s.id);let d=0,r0=leaves.length;
-  s.ins.forEach(x=>{if(x[0]=='@')d=Math.max(d,w(by[x.slice(1)]));else leaves.push(x)});
-  s.r0=r0;s.r1=Math.max(leaves.length,r0+1);s.d=d+1;return s.d})(S[S.length-1]||{ins:[],id:'-'});
- const P=R.pre.length;let h='';
- R.pre.forEach((p,i)=>h+=`<div class="c pre ${p.auto?'auto':''}" style="grid-row:${i+1}" ${p.auto?'title="Auto-added"':''}>${esc(p.t)}</div>`);
- leaves.forEach((x,i)=>h+=`<div class="c" style="grid-row:${P+i+1};grid-column:1">${esc(x)}</div>`);
- S.filter(s=>s.d).forEach(s=>{
-  h+=`<div class="c a ${s.auto.length?'auto':''}" title="${esc('Makes: '+s.out+(s.auto.length?' · auto: '+s.auto.join('; '):''))}" style="grid-row:${P+s.r0+1}/${P+s.r1+1};grid-column:${s.d+1}">${esc(s.action)}</div>`});
- $('g').innerHTML=h;
- $('n').innerHTML=R.notes.map(n=>`<li>${esc(n)}</li>`).join('')}
-const q=new URLSearchParams(location.search);
-let src=q.get('r');
-if(!src&&q.get('z'))try{src=decodeURIComponent(escape(atob(q.get('z').replace(/-/g,'+').replace(/_/g,'/'))))}catch(e){}
-if(q.get('theme'))document.documentElement.dataset.theme=q.get('theme');
-$('src').value=src||SAMPLE;
-if(q.get('edit')=='1'){$('ed').classList.remove('hide');$('n').classList.remove('hide')}
-if(q.get('embed')=='1')$('bt').classList.add('hide');
-$('go').onclick=()=>draw($('src').value);
-$('cp').onclick=async()=>{const u=location.origin+location.pathname+'?r='+encodeURIComponent($('src').value);
- try{await navigator.clipboard.writeText(u);$('m').textContent=' copied'}catch(e){prompt('Copy:',u)}};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+function parse(t) {
+  const R = { title: '', pre: [], steps: [], notes: [] };
+  for (let l of t.split('\n')) {
+    l = l.trim();
+    if (!l) continue;
+    let m;
+    if (m = l.match(/^title\s+(.+)/i)) R.title = m[1];
+    else if (m = l.match(/^pre\s+(.+)/i)) R.pre.push({ t: m[1] });
+    else if (m = l.match(/^(\w+):\s*([^|]*?)\s*(?:=>\s*([^|]*?))?\s*(?:\|(.*))?$/)) {
+      R.steps.push({
+        id: m[1],
+        action: m[2].trim(),
+        out: (m[3] || '').trim(),
+        ins: (m[4] || '').split('|').map(s => s.trim()).filter(Boolean),
+        auto: []
+      });
+    } else {
+      R.notes.push('Could not parse: ' + l);
+    }
+  }
+  return R;
+}
+
+function fix(R) {
+  const S = R.steps, by = {};
+  S.forEach(s => by[s.id] = s);
+  S.forEach((s, i) => {
+    if (!s.action) { s.action = 'combine'; s.auto.push('action'); }
+    s.ins = s.ins.filter(x => {
+      if (x[0] == '@' && !by[x.slice(1)]) {
+        R.notes.push(`${s.id}: unknown reference ${x} dropped`);
+        return false;
+      }
+      return true;
+    });
+    if (!s.ins.length && i) {
+      s.ins = ['@' + S[i - 1].id];
+      s.auto.push('input: previous step');
+    }
+    if (!s.out) {
+      s.out = s.action.split(' ')[0] + ' result';
+      s.auto.push('output name');
+    }
+    s.ins.forEach(x => {
+      if (x[0] != '@') {
+        if (!/\d|pinch|dash|to taste/i.test(x)) R.notes.push(`No quantity: "${x}"`);
+        else if (/\b(oz|cups?|tsp|tbs|tbsp|lb)\b/i.test(x) && !/\(\s*[\d.]+\s*(g|ml|mL|kg|l)\s*\)/.test(x)) {
+          R.notes.push(`No metric weight/volume: "${x}"`);
+        }
+      }
+    });
+  });
+  if (!S.length) return R;
+  const used = new Set();
+  S.forEach(s => s.ins.forEach(x => x[0] == '@' && used.add(x.slice(1))));
+  const last = S[S.length - 1];
+  S.slice(0, -1).forEach(s => {
+    if (!used.has(s.id)) {
+      last.ins.unshift('@' + s.id);
+      last.auto.push('joined unused "' + s.out + '"');
+    }
+  });
+  const bk = S.map(s => s.action.match(/(\d{3})\s*°?\s*F/i)).find(Boolean);
+  if (bk && !R.pre.some(p => /preheat/i.test(p.t))) {
+    R.pre.unshift({ t: `Preheat oven to ${bk[1]}°F (${Math.round((bk[1] - 32) / 9) * 5}°C)`, auto: 1 });
+  }
+  if (/bake|roast/i.test(last.action) && !R.pre.some(p => /pan|tray|dish|grease|butter and flour/i.test(p.t))) {
+    R.notes.push('No pan/tray prep step given');
+  }
+  return R;
+}
+
+// Separates quantity from ingredient name for cleaner visual scanning
+function splitIng(x) {
+  const m = x.match(/^([\d\/.\s-]+(?:\([^)]*\)\s*)?(?:cups?|tsp\.?|tbs\.?|tbsp\.?|oz|g|ml|mL|shots?|large|medium|small|lb|pinch|dash)?\s*(?:\([^)]*\)\s*)?)(.+)$/i);
+  if (m && m[1].trim() && m[2].trim()) {
+    return { qty: m[1].trim(), name: m[2].trim() };
+  }
+  return { qty: '', name: x };
+}
+
+function draw(text) {
+  const R = fix(parse(text)), S = R.steps, by = {};
+  S.forEach(s => by[s.id] = s);
+
+  document.title = R.title || 'Recipe';
+  if (R.title) $('title-el').textContent = R.title;
+
+  const leaves = [], seen = new Set();
+  (function w(s) {
+    if (seen.has(s.id)) return s.d || 1;
+    seen.add(s.id);
+    let d = 0, r0 = leaves.length;
+    s.ins.forEach(x => {
+      if (x[0] == '@') d = Math.max(d, w(by[x.slice(1)]));
+      else leaves.push(x);
+    });
+    s.r0 = r0;
+    s.r1 = Math.max(leaves.length, r0 + 1);
+    s.d = d + 1;
+    return s.d;
+  })(S[S.length - 1] || { ins: [], id: '-' });
+
+  const P = R.pre.length;
+  let h = '';
+
+  // Prep steps
+  R.pre.forEach((p, i) => {
+    const icon = /preheat/i.test(p.t) ? '🔥' : '📋';
+    h += `<div class="c pre ${p.auto ? 'auto' : ''}" onclick="this.classList.toggle('done')" style="grid-row:${i + 1}" ${p.auto ? 'title="Auto-added"' : ''}>
+      <span class="pre-icon">${icon}</span>
+      <span class="pre-text">${esc(p.t)}</span>
+    </div>`;
+  });
+
+  // Ingredients
+  leaves.forEach((x, i) => {
+    const { qty, name } = splitIng(x);
+    h += `<div class="c ing" onclick="this.classList.toggle('done')" style="grid-row:${P + i + 1};grid-column:1">
+      <span class="ing-name">${esc(name)}</span>
+      ${qty ? `<span class="ing-qty">${esc(qty)}</span>` : ''}
+    </div>`;
+  });
+
+  // Action nodes
+  S.filter(s => s.d).forEach(s => {
+    const tip = 'Makes: ' + s.out + (s.auto.length ? ' · auto: ' + s.auto.join('; ') : '');
+    h += `<div class="c a ${s.auto.length ? 'auto' : ''}" title="${esc(tip)}" style="grid-row:${P + s.r0 + 1}/${P + s.r1 + 1};grid-column:${s.d + 1}">
+      <div class="act-main">${esc(s.action)}</div>
+      ${s.out ? `<div class="act-out">→ ${esc(s.out)}</div>` : ''}
+    </div>`;
+  });
+
+  $('g').innerHTML = h;
+  $('n').innerHTML = R.notes.map(n => `<li>${esc(n)}</li>`).join('');
+  if (q.get('edit') == '1') {
+    $('n').classList.toggle('hide', R.notes.length === 0);
+  }
+}
+
+const q = new URLSearchParams(location.search);
+let src = q.get('r');
+if (!src && q.get('z')) {
+  try { src = decodeURIComponent(escape(atob(q.get('z').replace(/-/g, '+').replace(/_/g, '/')))); } catch (e) {}
+}
+if (q.get('theme')) document.documentElement.dataset.theme = q.get('theme');
+if (q.get('title') == '1' || q.get('edit') == '1') $('hdr').classList.remove('hide');
+
+$('src').value = src || SAMPLE;
+if (q.get('edit') == '1') $('ed').classList.remove('hide');
+if (q.get('embed') == '1') $('bt').classList.add('hide');
+
+$('go').onclick = () => draw($('src').value);
+$('cp').onclick = async () => {
+  const u = location.origin + location.pathname + '?r=' + encodeURIComponent($('src').value);
+  try {
+    await navigator.clipboard.writeText(u);
+    $('m').textContent = '✓ Copied embed URL';
+    setTimeout(() => $('m').textContent = '', 2500);
+  } catch (e) {
+    prompt('Copy:', u);
+  }
+};
+
 draw($('src').value);
-</script></body></html>
+</script>
+</body>
+</html>
